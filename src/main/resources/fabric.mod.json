@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "doublejumpattribute",
+  "version": "${version}",
+  "name": "Double Jump Attribute",
+  "description": "Adds a new attribute which allows the player to double jump.",
+  "authors": [
+    "AmyMialee"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/double-jump-attribute",
+    "issues": "https://github.com/AmyMialee/doublejumpattribute/issues"
+  },
+  "license": "LGPL-3.0",
+  "icon": "assets/doublejumpattribute/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "amymialee.doublejumpattribute.client.DoubleJumpAttributeClient"
+    ],
+    "main": [
+      "amymialee.doublejumpattribute.DoubleJumpAttribute"
+    ]
+  },
+  "mixins": [
+    "doublejumpattribute.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*"
+  },
+  "custom": {
+    "modupdater": {
+      "strategy": "curseforge",
+      "projectID": 532877,
+      "strict": false
+    },
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/P4dUsxv6An"
+      }
+    }
+  }
+}
