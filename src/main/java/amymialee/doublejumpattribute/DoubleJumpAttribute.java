@@ -18,7 +18,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.registry.Registry;
@@ -38,16 +38,25 @@ public class DoubleJumpAttribute implements ModInitializer {
 
     public static final Item JUMP_BOOTS = new JumpBootsItem(new Item.Settings().group(ItemGroup.COMBAT).maxCount(1).rarity(Rarity.RARE).fireproof());
 
+    public static final Identifier JUMP_SOUND_ID = new Identifier(MODID, "entity.doublejumpattribute.jump");
+    public static SoundEvent JUMP_SOUND_EVENT = new SoundEvent(JUMP_SOUND_ID);
+    public static final Identifier DOUBLE_JUMP_STAT = new Identifier(MODID, "double_jumped");
+
+    public static DoubleJumpAttributeConfig config = null;
+
     @Override
     public void onInitialize() {
-        Registry.register(Registry.ITEM, new Identifier(MODID, "jump_boots"), JUMP_BOOTS);
+        config = DoubleJumpAttributeConfig.load();
 
+        Registry.register(Registry.SOUND_EVENT, JUMP_SOUND_ID, JUMP_SOUND_EVENT);
+        Registry.register(Registry.ITEM, new Identifier(MODID, "jump_boots"), JUMP_BOOTS);
         Registry.register(Registry.ATTRIBUTE, new Identifier(MODID, "double_jump_attribute"), JUMPS);
+        Registry.register(Registry.CUSTOM_STAT, "double_jumped", DOUBLE_JUMP_STAT);
 
         ServerPlayNetworking.registerGlobalReceiver(DOUBLEJUMPED, (server, playerEntity, playNetworkHandler, packetByteBuf, packetSender) -> {
             ((LastHurtWrapper) playerEntity).doubleJump();
-            playerEntity.getServerWorld().playSoundFromEntity(null, playerEntity, SoundEvents.BLOCK_WOOL_PLACE, SoundCategory.PLAYERS, 1.0F, 1.0F);
-            for (int i = 0; i < playerEntity.getRandom().nextInt(35) + 10; i++) {
+            playerEntity.getServerWorld().playSoundFromEntity(null, playerEntity, JUMP_SOUND_EVENT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+            for (int i = 0; i < DoubleJumpAttributeConfig.load().jumpParticleCount; i++) {
                 playerEntity.getServerWorld().spawnParticles(ParticleTypes.CLOUD,
                         playerEntity.getX() + playerEntity.getRandom().nextGaussian() * 0.12999999523162842D,
                         playerEntity.getBoundingBox().minY + 0.5D + playerEntity.getRandom().nextGaussian() * 0.12999999523162842D,
@@ -55,6 +64,7 @@ public class DoubleJumpAttribute implements ModInitializer {
                         1, 0.0D, 0.0D, 0.0D, 0.15D);
             }
         });
+
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(
                 CommandManager.literal("setplayervelocity")

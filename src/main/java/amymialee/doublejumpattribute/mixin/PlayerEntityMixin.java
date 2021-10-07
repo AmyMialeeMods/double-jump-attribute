@@ -1,6 +1,7 @@
 package amymialee.doublejumpattribute.mixin;
 
 import amymialee.doublejumpattribute.DoubleJumpAttribute;
+import amymialee.doublejumpattribute.DoubleJumpAttributeConfig;
 import amymialee.doublejumpattribute.client.LastHurtWrapper;
 import amymialee.doublejumpattribute.client.LivingEntityAccessor;
 import net.fabricmc.api.EnvType;
@@ -39,6 +40,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements LastHurt
     @Unique
     @Override
     public void doubleJump() {
+        ((PlayerEntity) ((Object) this)).incrementStat(DoubleJumpAttribute.DOUBLE_JUMP_STAT);
         fallDistance = 0;
         setDoubleJumpAmount(doubleJumpCount + 1);
         double d = this.getJumpVelocity();
@@ -72,7 +74,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements LastHurt
         }
         int jumps = (int) DoubleJumpAttribute.getDoubleJumps(this);
         ItemStack itemStack = this.getEquippedStack(EquipmentSlot.CHEST);
-        if ((!itemStack.isOf(Items.ELYTRA) || this.isFallFlying()) && jumping && !isOnGround() && (doubleJumpCount < jumps) && ((LivingEntityAccessor) this).getJumpingCooldown() == 0 && !isSpectator() && !isDoubleJumping) {
+        if ((!itemStack.isOf(Items.ELYTRA) || this.isFallFlying()) && jumping && !isOnGround() && (doubleJumpCount < jumps + DoubleJumpAttributeConfig.load().jumpJumpCount) && ((LivingEntityAccessor) this).getJumpingCooldown() == 0 && !isSpectator() && !isDoubleJumping) {
             isDoubleJumping = true;
             doubleJump();
         } else if (isOnGround()) {

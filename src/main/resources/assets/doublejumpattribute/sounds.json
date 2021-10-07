@@ -1,0 +1,11 @@
+{
+  "entity.doublejumpattribute.jump": {
+    "subtitle" : "subtitles.doublejumpattribute.jump",
+    "sounds": [
+      "minecraft:step/cloth1",
+      "minecraft:step/cloth2",
+      "minecraft:step/cloth3",
+      "minecraft:step/cloth4"
+    ]
+  }
+}

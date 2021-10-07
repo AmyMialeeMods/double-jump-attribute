@@ -1,4 +1,5 @@
 {
   "item.doublejumpattribute.jump_boots" : "Jump Boots",
-  "attribute.doublejumpattribute.jumps" : "Extra Jumps"
+  "attribute.doublejumpattribute.jumps" : "Extra Jumps",
+  "subtitles.doublejumpattribute.jump" : "Double Jump"
 }
