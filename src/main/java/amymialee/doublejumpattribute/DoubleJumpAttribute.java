@@ -19,6 +19,9 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.registry.Registry;
@@ -65,7 +68,6 @@ public class DoubleJumpAttribute implements ModInitializer {
             }
         });
 
-
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(
                 CommandManager.literal("setplayervelocity")
                         .then(CommandManager.argument("target", EntityArgumentType.player())
@@ -73,6 +75,10 @@ public class DoubleJumpAttribute implements ModInitializer {
                                         .then(CommandManager.argument("y", FloatArgumentType.floatArg())
                                                 .then(CommandManager.argument("z", FloatArgumentType.floatArg())
                                                         .executes(ctx -> {
+                                                            if (!ctx.getSource().hasPermissionLevel(2)) {
+                                                                ctx.getSource().sendError(new LiteralText("Insufficient Permissions.").formatted(Formatting.RED));
+                                                                return 0;
+                                                            }
                                                             ServerPlayerEntity to = EntityArgumentType.getPlayer(ctx, "target");
                                                             float x = FloatArgumentType.getFloat(ctx, "x");
                                                             float y = FloatArgumentType.getFloat(ctx, "y");
@@ -85,6 +91,7 @@ public class DoubleJumpAttribute implements ModInitializer {
                                                             buf2.writeFloat(z);
                                                             ServerPlayNetworking.send(to, SET_VELOCITY, buf2);
 
+                                                            ctx.getSource().sendFeedback(new LiteralText("Set velocity of " + to.getDisplayName().getString() + " to " + x + " " + y + " " + z + ".").formatted(Formatting.GRAY), true);
                                                             return 0;
                                                         })))))));
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(
@@ -94,6 +101,10 @@ public class DoubleJumpAttribute implements ModInitializer {
                                         .then(CommandManager.argument("y", FloatArgumentType.floatArg())
                                                 .then(CommandManager.argument("z", FloatArgumentType.floatArg())
                                                         .executes(ctx -> {
+                                                            if (!ctx.getSource().hasPermissionLevel(2)) {
+                                                                ctx.getSource().sendError(new LiteralText("Insufficient Permissions.").formatted(Formatting.RED));
+                                                                return 0;
+                                                            }
                                                             ServerPlayerEntity to = EntityArgumentType.getPlayer(ctx, "target");
                                                             float x = FloatArgumentType.getFloat(ctx, "x");
                                                             float y = FloatArgumentType.getFloat(ctx, "y");
@@ -106,6 +117,7 @@ public class DoubleJumpAttribute implements ModInitializer {
                                                             buf2.writeFloat(z);
                                                             ServerPlayNetworking.send(to, ADD_VELOCITY, buf2);
 
+                                                            ctx.getSource().sendFeedback(new LiteralText("Added " + x + " " + y + " " + z + " velocity to " + to.getDisplayName().getString() + ".").formatted(Formatting.GRAY), true);
                                                             return 0;
                                                         })))))));
     }
