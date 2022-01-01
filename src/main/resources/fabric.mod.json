@@ -8,10 +8,10 @@
     "AmyMialee"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/double-jump-attribute",
-    "issues": "https://github.com/AmyMialee/doublejumpattribute/issues"
+    "homepage": "https://github.com/AmyMialeeMods/double-jump-attribute",
+    "issues": "https://github.com/AmyMialeeMods/double-jump-attribute/issues"
   },
-  "license": "LGPL-3.0",
+  "license": "All-Rights-Reserved",
   "icon": "assets/doublejumpattribute/icon.png",
   "environment": "*",
   "entrypoints": {
@@ -20,6 +20,9 @@
     ],
     "main": [
       "amymialee.doublejumpattribute.DoubleJumpAttribute"
+    ],
+    "modmenu": [
+      "amymialee.doublejumpattribute.DoubleJumpAttributeModMenu"
     ]
   },
   "mixins": [

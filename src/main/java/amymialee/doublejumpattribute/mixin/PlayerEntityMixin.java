@@ -1,7 +1,6 @@
 package amymialee.doublejumpattribute.mixin;
 
 import amymialee.doublejumpattribute.DoubleJumpAttribute;
-import amymialee.doublejumpattribute.DoubleJumpAttributeConfig;
 import amymialee.doublejumpattribute.client.LastHurtWrapper;
 import amymialee.doublejumpattribute.client.LivingEntityAccessor;
 import net.fabricmc.api.EnvType;
@@ -25,6 +24,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Objects;
+
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements LastHurtWrapper {
     @Shadow public abstract void jump();
@@ -45,7 +46,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements LastHurt
         setDoubleJumpAmount(doubleJumpCount + 1);
         double d = this.getJumpVelocity();
         Vec3d vec3d = this.getVelocity();
-        double j = this.hasStatusEffect(StatusEffects.JUMP_BOOST) ? 1 + (0.1 * (this.getStatusEffect(StatusEffects.JUMP_BOOST).getAmplifier() + 1)) : 1;
+        double j = this.hasStatusEffect(StatusEffects.JUMP_BOOST) ? 1 + (0.1 * (Objects.requireNonNull(this.getStatusEffect(StatusEffects.JUMP_BOOST)).getAmplifier() + 1)) : 1;
         if (this.isSprinting()) {
             this.setVelocity(vec3d.x, d * 1.8 * j, vec3d.z);
             float f = this.getYaw() * 0.017453292F;
@@ -74,7 +75,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements LastHurt
         }
         int jumps = (int) DoubleJumpAttribute.getDoubleJumps(this);
         ItemStack itemStack = this.getEquippedStack(EquipmentSlot.CHEST);
-        if ((!itemStack.isOf(Items.ELYTRA) || this.isFallFlying()) && jumping && !isOnGround() && (doubleJumpCount < jumps + DoubleJumpAttributeConfig.load().jumpJumpCount) && ((LivingEntityAccessor) this).getJumpingCooldown() == 0 && !isSpectator() && !isDoubleJumping) {
+        if ((!itemStack.isOf(Items.ELYTRA) || this.isFallFlying()) && jumping && !isOnGround() && (doubleJumpCount < jumps) && ((LivingEntityAccessor) this).getJumpingCooldown() == 0 && !isSpectator() && !isDoubleJumping) {
             isDoubleJumping = true;
             doubleJump();
         } else if (isOnGround()) {

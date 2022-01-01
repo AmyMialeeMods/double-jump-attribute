@@ -3,6 +3,8 @@ package amymialee.doublejumpattribute;
 import amymialee.doublejumpattribute.client.LastHurtWrapper;
 import amymialee.doublejumpattribute.items.JumpBootsItem;
 import com.mojang.brigadier.arguments.FloatArgumentType;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -20,11 +22,12 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.registry.Registry;
+
+import java.util.Objects;
 
 public class DoubleJumpAttribute implements ModInitializer {
     public static final String MODID = "doublejumpattribute";
@@ -36,7 +39,7 @@ public class DoubleJumpAttribute implements ModInitializer {
             "attribute." + MODID + '.' + "jumps", 0, 0, 1024).setTracked(true);
 
     public static double getDoubleJumps(final LivingEntity entity) {
-        return entity.getAttributeInstance(JUMPS) == null ? 0 : entity.getAttributeInstance(JUMPS).getValue();
+        return entity.getAttributeInstance(JUMPS) == null ? 0 : Objects.requireNonNull(entity.getAttributeInstance(JUMPS)).getValue();
     }
 
     public static final Item JUMP_BOOTS = new JumpBootsItem(new Item.Settings().group(ItemGroup.COMBAT).maxCount(1).rarity(Rarity.RARE).fireproof());
@@ -45,11 +48,12 @@ public class DoubleJumpAttribute implements ModInitializer {
     public static SoundEvent JUMP_SOUND_EVENT = new SoundEvent(JUMP_SOUND_ID);
     public static final Identifier DOUBLE_JUMP_STAT = new Identifier(MODID, "double_jumped");
 
-    public static DoubleJumpAttributeConfig config = null;
+    public static DoubleJumpAttributeConfig config;
 
     @Override
     public void onInitialize() {
-        config = DoubleJumpAttributeConfig.load();
+        AutoConfig.register(DoubleJumpAttributeConfig.class, Toml4jConfigSerializer::new);
+        config = AutoConfig.getConfigHolder(DoubleJumpAttributeConfig.class).getConfig();
 
         Registry.register(Registry.SOUND_EVENT, JUMP_SOUND_ID, JUMP_SOUND_EVENT);
         Registry.register(Registry.ITEM, new Identifier(MODID, "jump_boots"), JUMP_BOOTS);
@@ -58,9 +62,9 @@ public class DoubleJumpAttribute implements ModInitializer {
 
         ServerPlayNetworking.registerGlobalReceiver(DOUBLEJUMPED, (server, playerEntity, playNetworkHandler, packetByteBuf, packetSender) -> {
             ((LastHurtWrapper) playerEntity).doubleJump();
-            playerEntity.getServerWorld().playSoundFromEntity(null, playerEntity, JUMP_SOUND_EVENT, SoundCategory.PLAYERS, 1.0F, 1.0F);
-            for (int i = 0; i < DoubleJumpAttributeConfig.load().jumpParticleCount; i++) {
-                playerEntity.getServerWorld().spawnParticles(ParticleTypes.CLOUD,
+            playerEntity.getWorld().playSoundFromEntity(null, playerEntity, JUMP_SOUND_EVENT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+            for (int i = 0; i < config.jumpParticleCount; i++) {
+                playerEntity.getWorld().spawnParticles(ParticleTypes.CLOUD,
                         playerEntity.getX() + playerEntity.getRandom().nextGaussian() * 0.12999999523162842D,
                         playerEntity.getBoundingBox().minY + 0.5D + playerEntity.getRandom().nextGaussian() * 0.12999999523162842D,
                         playerEntity.getZ() + playerEntity.getRandom().nextGaussian() * 0.12999999523162842D,
