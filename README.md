@@ -1,6 +1,6 @@
 # Double Jump Attribute
 
-Double Jump Attribute adds a new attribute giving the players extra midair jumps.
+Double Jump Attribute adds a new attribute giving the players extra mid-air jumps.
 
 This attribute can be applied like any other, to a cap of 1024.
 
