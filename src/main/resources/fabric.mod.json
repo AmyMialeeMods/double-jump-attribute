@@ -29,7 +29,8 @@
     "doublejumpattribute.mixins.json"
   ],
   "depends": {
-    "fabric": "*"
+    "fabric": "*",
+    "cloth-config": "*"
   },
   "custom": {
     "modupdater": {
