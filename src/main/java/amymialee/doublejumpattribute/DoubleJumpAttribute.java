@@ -3,8 +3,6 @@ package amymialee.doublejumpattribute;
 import amymialee.doublejumpattribute.client.LastHurtWrapper;
 import amymialee.doublejumpattribute.items.JumpBootsItem;
 import com.mojang.brigadier.arguments.FloatArgumentType;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -48,13 +46,8 @@ public class DoubleJumpAttribute implements ModInitializer {
     public static SoundEvent JUMP_SOUND_EVENT = new SoundEvent(JUMP_SOUND_ID);
     public static final Identifier DOUBLE_JUMP_STAT = new Identifier(MODID, "double_jumped");
 
-    public static DoubleJumpAttributeConfig config;
-
     @Override
     public void onInitialize() {
-        AutoConfig.register(DoubleJumpAttributeConfig.class, Toml4jConfigSerializer::new);
-        config = AutoConfig.getConfigHolder(DoubleJumpAttributeConfig.class).getConfig();
-
         Registry.register(Registry.SOUND_EVENT, JUMP_SOUND_ID, JUMP_SOUND_EVENT);
         Registry.register(Registry.ITEM, new Identifier(MODID, "jump_boots"), JUMP_BOOTS);
         Registry.register(Registry.ATTRIBUTE, new Identifier(MODID, "double_jump_attribute"), JUMPS);
@@ -63,7 +56,7 @@ public class DoubleJumpAttribute implements ModInitializer {
         ServerPlayNetworking.registerGlobalReceiver(DOUBLEJUMPED, (server, playerEntity, playNetworkHandler, packetByteBuf, packetSender) -> {
             ((LastHurtWrapper) playerEntity).doubleJump();
             playerEntity.getWorld().playSoundFromEntity(null, playerEntity, JUMP_SOUND_EVENT, SoundCategory.PLAYERS, 1.0F, 1.0F);
-            for (int i = 0; i < config.jumpParticleCount; i++) {
+            for (int i = 0; i < 24; i++) {
                 playerEntity.getWorld().spawnParticles(ParticleTypes.CLOUD,
                         playerEntity.getX() + playerEntity.getRandom().nextGaussian() * 0.12999999523162842D,
                         playerEntity.getBoundingBox().minY + 0.5D + playerEntity.getRandom().nextGaussian() * 0.12999999523162842D,

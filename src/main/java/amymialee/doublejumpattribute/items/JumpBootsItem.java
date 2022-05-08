@@ -36,7 +36,7 @@ public class JumpBootsItem extends ArmorItem implements Wearable {
 
     @Override
     public void postProcessNbt(NbtCompound nbt) {
-        nbt.putBoolean("Unbreakable", true);
+        //nbt.putBoolean("Unbreakable", true);
         NbtList nbtList = nbt.getList("Enchantments", 10);
         if (!nbtList.contains(EnchantmentHelper.createNbt(EnchantmentHelper.getEnchantmentId(Enchantments.FEATHER_FALLING), 4))) {
             nbtList.add(EnchantmentHelper.createNbt(EnchantmentHelper.getEnchantmentId(Enchantments.FEATHER_FALLING), 4));

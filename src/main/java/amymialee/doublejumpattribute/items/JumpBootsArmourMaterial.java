@@ -10,7 +10,7 @@ import net.minecraft.sound.SoundEvents;
 public class JumpBootsArmourMaterial implements ArmorMaterial {
     @Override
     public int getDurability(EquipmentSlot slot) {
-        return 12 * 82;
+        return 0;
     }
 
     @Override

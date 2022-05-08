@@ -42,7 +42,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements LastHurt
     @Override
     public void doubleJump() {
         ((PlayerEntity) ((Object) this)).incrementStat(DoubleJumpAttribute.DOUBLE_JUMP_STAT);
-        fallDistance = 0;
+        fallDistance = -6;
         setDoubleJumpAmount(doubleJumpCount + 1);
         double d = this.getJumpVelocity();
         Vec3d vec3d = this.getVelocity();

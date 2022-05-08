@@ -20,17 +20,13 @@
     ],
     "main": [
       "amymialee.doublejumpattribute.DoubleJumpAttribute"
-    ],
-    "modmenu": [
-      "amymialee.doublejumpattribute.DoubleJumpAttributeModMenu"
     ]
   },
   "mixins": [
     "doublejumpattribute.mixins.json"
   ],
   "depends": {
-    "fabric": "*",
-    "cloth-config": "*"
+    "fabric": "*"
   },
   "custom": {
     "modupdater": {
