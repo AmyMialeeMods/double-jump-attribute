@@ -1,0 +1,21 @@
+{
+  "tone": "release",
+  "color": 8271574,
+  "catalyst": {
+    "item": "minecraft:rabbit_foot"
+  },
+  "modifier": 1.3,
+  "ignore_slot": true,
+  "whitelist": [
+    "doublejumpattribute:greater"
+  ],
+  "attribute": "doublejumpattribute:double_jump_attribute",
+  "affinity": {
+    "item": "purpeille:purpeille_boots"
+  },
+  "synergy": {
+    "doublejumpattribute:greater": "identical"
+  },
+  "multiply": false,
+  "force_int": true
+}
