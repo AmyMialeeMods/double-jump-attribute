@@ -1,5 +1,8 @@
 {
   "item.doublejumpattribute.jump_boots" : "Jump Boots",
   "attribute.doublejumpattribute.jumps" : "Extra Jumps",
-  "subtitles.doublejumpattribute.jump" : "Double Jump"
+  "subtitles.doublejumpattribute.jump" : "Double Jump",
+  "aspect.doublejumpattribute.greater": "Greater",
+  "revelation.doublejumpattribute.potential": "Potential",
+  "rite.doublejumpattribute.potential": "Reach for the stars."
 }
