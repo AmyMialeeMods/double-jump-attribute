@@ -7,10 +7,11 @@ version = project.mod_version
 group = project.maven_group
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    //Fabric
+    minecraft ("com.mojang:minecraft:${project.minecraft_version}")
+    mappings ("net.fabricmc:yarn:${project.yarn_mappings}:v2")
+    modImplementation ("net.fabricmc:fabric-loader:${project.loader_version}")
+    modImplementation ("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
 }
 
 processResources {
@@ -19,5 +20,23 @@ processResources {
 
     filesMatching("fabric.mod.json") {
         expand "version": project.version
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name = "willBlRepositoryReleases"
+            url = "https://maven.willbl.dev/releases"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
     }
 }

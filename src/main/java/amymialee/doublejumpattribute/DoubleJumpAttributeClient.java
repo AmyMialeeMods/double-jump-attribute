@@ -1,6 +1,5 @@
-package amymialee.doublejumpattribute.client;
+package amymialee.doublejumpattribute;
 
-import amymialee.doublejumpattribute.DoubleJumpAttribute;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -10,7 +9,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 public class DoubleJumpAttributeClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ClientPlayNetworking.registerGlobalReceiver(DoubleJumpAttribute.ADD_VELOCITY, (minecraftClient, playNetworkHandler, packetByteBuf, packetSender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(DoubleJumpAttribute.PACKET_ADD_VELOCITY, (minecraftClient, playNetworkHandler, packetByteBuf, packetSender) -> {
             float x = packetByteBuf.readFloat();
             float y = packetByteBuf.readFloat();
             float z = packetByteBuf.readFloat();
@@ -19,7 +18,7 @@ public class DoubleJumpAttributeClient implements ClientModInitializer {
                 minecraftClient.player.addVelocity(x, y, z);
             });
         });
-        ClientPlayNetworking.registerGlobalReceiver(DoubleJumpAttribute.SET_VELOCITY, (minecraftClient, playNetworkHandler, packetByteBuf, packetSender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(DoubleJumpAttribute.PACKET_SET_VELOCITY, (minecraftClient, playNetworkHandler, packetByteBuf, packetSender) -> {
             float x = packetByteBuf.readFloat();
             float y = packetByteBuf.readFloat();
             float z = packetByteBuf.readFloat();

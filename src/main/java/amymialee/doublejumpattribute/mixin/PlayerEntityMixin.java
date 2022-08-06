@@ -1,8 +1,7 @@
 package amymialee.doublejumpattribute.mixin;
 
 import amymialee.doublejumpattribute.DoubleJumpAttribute;
-import amymialee.doublejumpattribute.client.LastHurtWrapper;
-import amymialee.doublejumpattribute.client.LivingEntityAccessor;
+import amymialee.doublejumpattribute.client.DoubleJumpWrapper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -27,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Objects;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity implements LastHurtWrapper {
+public abstract class PlayerEntityMixin extends LivingEntity implements DoubleJumpWrapper {
     @Shadow public abstract void jump();
     @Shadow public abstract boolean isSpectator();
 
@@ -63,7 +62,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements LastHurt
     @Unique
     @Environment(EnvType.CLIENT)
     private static void sendPacketClient() {
-        ClientPlayNetworking.send(DoubleJumpAttribute.DOUBLEJUMPED, PacketByteBufs.empty());
+        ClientPlayNetworking.send(DoubleJumpAttribute.PACKET_DOUBLEJUMPED, PacketByteBufs.empty());
     }
 
     @Inject(method = "tickMovement", at = @At(value = "HEAD"))

@@ -1,6 +1,6 @@
 package amymialee.doublejumpattribute;
 
-import amymialee.doublejumpattribute.client.LastHurtWrapper;
+import amymialee.doublejumpattribute.client.DoubleJumpWrapper;
 import amymialee.doublejumpattribute.items.JumpBootsItem;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import net.fabricmc.api.ModInitializer;
@@ -27,34 +27,25 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class DoubleJumpAttribute implements ModInitializer {
-    public static final String MODID = "doublejumpattribute";
-    public static final Identifier ADD_VELOCITY = new Identifier(MODID, "addplayervelocity");
-    public static final Identifier SET_VELOCITY = new Identifier(MODID, "setplayervelocity");
-    public static final Identifier DOUBLEJUMPED = new Identifier(MODID, "doublejumped");
-
-    public static final EntityAttribute JUMPS = new ClampedEntityAttribute(
-            "attribute." + MODID + '.' + "jumps", 0, 0, 1024).setTracked(true);
+    public static final String MOD_ID = "doublejumpattribute";
+    public static final Identifier PACKET_ADD_VELOCITY = id("addplayervelocity");
+    public static final Identifier PACKET_SET_VELOCITY = id("setplayervelocity");
+    public static final Identifier PACKET_DOUBLEJUMPED = id("doublejumped");
+    public static final EntityAttribute JUMPS = Registry.register(Registry.ATTRIBUTE, id("double_jump_attribute"), new ClampedEntityAttribute("attribute." + MOD_ID + '.' + "jumps", 0, 0, 1024).setTracked(true));
+    public static final Item JUMP_BOOTS = Registry.register(Registry.ITEM, id("jump_boots"), new JumpBootsItem(new Item.Settings().group(ItemGroup.COMBAT).maxCount(1).rarity(Rarity.RARE).fireproof()));
+    public static final SoundEvent JUMP_SOUND_EVENT = Registry.register(Registry.SOUND_EVENT, id("entity.doublejumpattribute.jump"), new SoundEvent(id("entity.doublejumpattribute.jump")));
+    public static final Identifier DOUBLE_JUMP_STAT = Registry.register(Registry.CUSTOM_STAT, "double_jumped", id("double_jumped"));
 
     public static double getDoubleJumps(final LivingEntity entity) {
         return entity.getAttributeInstance(JUMPS) == null ? 0 : Objects.requireNonNull(entity.getAttributeInstance(JUMPS)).getValue();
     }
 
-    public static final Item JUMP_BOOTS = new JumpBootsItem(new Item.Settings().group(ItemGroup.COMBAT).maxCount(1).rarity(Rarity.RARE).fireproof());
-
-    public static final Identifier JUMP_SOUND_ID = new Identifier(MODID, "entity.doublejumpattribute.jump");
-    public static SoundEvent JUMP_SOUND_EVENT = new SoundEvent(JUMP_SOUND_ID);
-    public static final Identifier DOUBLE_JUMP_STAT = new Identifier(MODID, "double_jumped");
-
     @Override
     public void onInitialize() {
-        Registry.register(Registry.SOUND_EVENT, JUMP_SOUND_ID, JUMP_SOUND_EVENT);
-        Registry.register(Registry.ITEM, new Identifier(MODID, "jump_boots"), JUMP_BOOTS);
-        Registry.register(Registry.ATTRIBUTE, new Identifier(MODID, "double_jump_attribute"), JUMPS);
-        Registry.register(Registry.CUSTOM_STAT, "double_jumped", DOUBLE_JUMP_STAT);
-
-        ServerPlayNetworking.registerGlobalReceiver(DOUBLEJUMPED, (server, playerEntity, playNetworkHandler, packetByteBuf, packetSender) -> {
-            ((LastHurtWrapper) playerEntity).doubleJump();
+        ServerPlayNetworking.registerGlobalReceiver(PACKET_DOUBLEJUMPED, (server, playerEntity, playNetworkHandler, packetByteBuf, packetSender) -> {
+            ((DoubleJumpWrapper) playerEntity).doubleJump();
             playerEntity.getWorld().playSoundFromEntity(null, playerEntity, JUMP_SOUND_EVENT, SoundCategory.PLAYERS, 1.0F, 1.0F);
             for (int i = 0; i < 24; i++) {
                 playerEntity.getWorld().spawnParticles(ParticleTypes.CLOUD,
@@ -64,58 +55,39 @@ public class DoubleJumpAttribute implements ModInitializer {
                         1, 0.0D, 0.0D, 0.0D, 0.15D);
             }
         });
-
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, a) -> dispatcher.register(
-                CommandManager.literal("setplayervelocity")
-                        .then(CommandManager.argument("target", EntityArgumentType.player())
-                                .then(CommandManager.argument("x", FloatArgumentType.floatArg())
-                                        .then(CommandManager.argument("y", FloatArgumentType.floatArg())
-                                                .then(CommandManager.argument("z", FloatArgumentType.floatArg())
-                                                        .executes(ctx -> {
-                                                            if (!ctx.getSource().hasPermissionLevel(2)) {
-                                                                ctx.getSource().sendError(Text.literal("Insufficient Permissions.").formatted(Formatting.RED));
-                                                                return 0;
-                                                            }
-                                                            ServerPlayerEntity to = EntityArgumentType.getPlayer(ctx, "target");
-                                                            float x = FloatArgumentType.getFloat(ctx, "x");
-                                                            float y = FloatArgumentType.getFloat(ctx, "y");
-                                                            float z = FloatArgumentType.getFloat(ctx, "z");
-                                                            to.setVelocity(x, y, z);
-
-                                                            PacketByteBuf buf2 = PacketByteBufs.create();
-                                                            buf2.writeFloat(x);
-                                                            buf2.writeFloat(y);
-                                                            buf2.writeFloat(z);
-                                                            ServerPlayNetworking.send(to, SET_VELOCITY, buf2);
-
-                                                            ctx.getSource().sendFeedback(Text.literal("Set velocity of " + to.getDisplayName().getString() + " to " + x + " " + y + " " + z + ".").formatted(Formatting.GRAY), true);
-                                                            return 0;
-                                                        })))))));
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, a) -> dispatcher.register(
-                CommandManager.literal("addplayervelocity")
-                        .then(CommandManager.argument("target", EntityArgumentType.player())
-                                .then(CommandManager.argument("x", FloatArgumentType.floatArg())
-                                        .then(CommandManager.argument("y", FloatArgumentType.floatArg())
-                                                .then(CommandManager.argument("z", FloatArgumentType.floatArg())
-                                                        .executes(ctx -> {
-                                                            if (!ctx.getSource().hasPermissionLevel(2)) {
-                                                                ctx.getSource().sendError(Text.literal("Insufficient Permissions.").formatted(Formatting.RED));
-                                                                return 0;
-                                                            }
-                                                            ServerPlayerEntity to = EntityArgumentType.getPlayer(ctx, "target");
-                                                            float x = FloatArgumentType.getFloat(ctx, "x");
-                                                            float y = FloatArgumentType.getFloat(ctx, "y");
-                                                            float z = FloatArgumentType.getFloat(ctx, "z");
-                                                            to.addVelocity(x, y, z);
-
-                                                            PacketByteBuf buf2 = PacketByteBufs.create();
-                                                            buf2.writeFloat(x);
-                                                            buf2.writeFloat(y);
-                                                            buf2.writeFloat(z);
-                                                            ServerPlayNetworking.send(to, ADD_VELOCITY, buf2);
-
-                                                            ctx.getSource().sendFeedback(Text.literal("Added " + x + " " + y + " " + z + " velocity to " + to.getDisplayName().getString() + ".").formatted(Formatting.GRAY), true);
-                                                            return 0;
-                                                        })))))));
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, a) -> dispatcher.register(CommandManager.literal("setplayervelocity").requires(source -> source.hasPermissionLevel(2)).then(CommandManager.argument("target", EntityArgumentType.player())
+                .then(CommandManager.argument("x", FloatArgumentType.floatArg()).then(CommandManager.argument("y", FloatArgumentType.floatArg()).then(CommandManager.argument("z", FloatArgumentType.floatArg()).executes(ctx -> {
+                    ServerPlayerEntity target = EntityArgumentType.getPlayer(ctx, "target");
+                    float x = FloatArgumentType.getFloat(ctx, "x");
+                    float y = FloatArgumentType.getFloat(ctx, "y");
+                    float z = FloatArgumentType.getFloat(ctx, "z");
+                    target.setVelocity(x, y, z);
+                    PacketByteBuf buf2 = PacketByteBufs.create();
+                    buf2.writeFloat(x);
+                    buf2.writeFloat(y);
+                    buf2.writeFloat(z);
+                    ServerPlayNetworking.send(target, PACKET_SET_VELOCITY, buf2);
+                    ctx.getSource().sendFeedback(Text.literal("Set velocity of " + target.getDisplayName().getString() + " to " + x + " " + y + " " + z + ".").formatted(Formatting.GRAY), true);
+                    return 0;
+                })))))));
+        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated, a) -> dispatcher.register(CommandManager.literal("addplayervelocity").requires(source -> source.hasPermissionLevel(2)).then(CommandManager.argument("target", EntityArgumentType.player())
+                .then(CommandManager.argument("x", FloatArgumentType.floatArg()).then(CommandManager.argument("y", FloatArgumentType.floatArg()).then(CommandManager.argument("z", FloatArgumentType.floatArg()).executes(ctx -> {
+                    ServerPlayerEntity target = EntityArgumentType.getPlayer(ctx, "target");
+                    float x = FloatArgumentType.getFloat(ctx, "x");
+                    float y = FloatArgumentType.getFloat(ctx, "y");
+                    float z = FloatArgumentType.getFloat(ctx, "z");
+                    target.addVelocity(x, y, z);
+                    PacketByteBuf buf2 = PacketByteBufs.create();
+                    buf2.writeFloat(x);
+                    buf2.writeFloat(y);
+                    buf2.writeFloat(z);
+                    ServerPlayNetworking.send(target, PACKET_ADD_VELOCITY, buf2);
+                    ctx.getSource().sendFeedback(Text.literal("Added " + x + " " + y + " " + z + " velocity to " + target.getDisplayName().getString() + ".").formatted(Formatting.GRAY), true);
+                    return 0;
+                })))))));
+    }
+    
+    public static Identifier id(String path) {
+        return new Identifier(MOD_ID, path);
     }
 }

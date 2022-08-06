@@ -4,6 +4,7 @@
   "package": "amymialee.doublejumpattribute.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "LivingEntityAccessor",
     "LivingEntityMixin",
     "PlayerEntityMixin"
   ],

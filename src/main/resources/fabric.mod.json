@@ -16,7 +16,7 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "amymialee.doublejumpattribute.client.DoubleJumpAttributeClient"
+      "amymialee.doublejumpattribute.DoubleJumpAttributeClient"
     ],
     "main": [
       "amymialee.doublejumpattribute.DoubleJumpAttribute"
@@ -36,7 +36,7 @@
     },
     "modmenu": {
       "links": {
-        "modmenu.discord": "https://discord.gg/P4dUsxv6An"
+        "modmenu.discord": "http://discord.amymialee.xyz/"
       }
     }
   }

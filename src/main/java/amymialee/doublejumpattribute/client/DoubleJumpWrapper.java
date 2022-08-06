@@ -1,6 +1,6 @@
 package amymialee.doublejumpattribute.client;
 
-public interface LastHurtWrapper {
+public interface DoubleJumpWrapper {
     void doubleJump();
     void setDoubleJumpAmount(int value);
 }
