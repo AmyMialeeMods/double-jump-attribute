@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-	modImplementation "amymialee:doublejumpattribute:1.0.7+1.19"
+	modImplementation "amymialee:doublejumpattribute:1.0.8+1.19"
 }
 ```
 
