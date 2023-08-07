@@ -3,41 +3,33 @@
   "id": "doublejumpattribute",
   "version": "${version}",
   "name": "Double Jump Attribute",
-  "description": "Double Jump Attribute adds a new attribute giving the players extra mid-air jumps.",
+  "description": "Adding extra mid-air jumps.",
   "authors": [
     "AmyMialee"
   ],
   "contact": {
-    "homepage": "https://github.com/AmyMialeeMods/double-jump-attribute",
-    "issues": "https://github.com/AmyMialeeMods/double-jump-attribute/issues"
+    "repo": "https://github.com/AmyMi/doublejumpattribute"
   },
   "license": "All-Rights-Reserved",
   "icon": "assets/doublejumpattribute/icon.png",
   "environment": "*",
   "entrypoints": {
-    "client": [
-      "amymialee.doublejumpattribute.DoubleJumpAttributeClient"
-    ],
     "main": [
-      "amymialee.doublejumpattribute.DoubleJumpAttribute"
+      "xyz.amymialee.doublejumpattribute.DoubleJumpAttribute"
+    ],
+    "cardinal-components-entity": [
+      "xyz.amymialee.doublejumpattribute.DoubleJumpAttribute"
     ]
   },
   "mixins": [
     "doublejumpattribute.mixins.json"
   ],
+  "custom": {
+    "cardinal-components": [
+      "doublejumpattribute:doublejump"
+    ]
+  },
   "depends": {
     "fabric": "*"
-  },
-  "custom": {
-    "modupdater": {
-      "strategy": "curseforge",
-      "projectID": 532877,
-      "strict": false
-    },
-    "modmenu": {
-      "links": {
-        "modmenu.discord": "http://discord.amymialee.xyz/"
-      }
-    }
   }
 }

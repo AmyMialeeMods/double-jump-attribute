@@ -3,9 +3,5 @@
   "subtitles.doublejumpattribute.jump" : "Double Jump",
 
   "item.doublejumpattribute.jump_boots" : "Jump Boots",
-  "item.doublejumpattribute.jump_boots.desc" : "Prevents Fall Damage.",
-
-  "aspect.doublejumpattribute.greater": "Greater",
-  "revelation.doublejumpattribute.potential": "Potential",
-  "rite.doublejumpattribute.potential": "Reach for the stars."
+  "item.doublejumpattribute.jump_boots.desc" : "Reduces Fall Damage."
 }
